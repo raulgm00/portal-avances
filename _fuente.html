@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧭</text></svg>" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portal de Avances · WeSoft</title>
+  <meta name="description" content="Portal de Avances WeSoft: tu cliente ve fases, tablero, reuniones y avances de su proyecto; un cerebro con agentes arma los documentos y dimensiona cada mejora antes de cotizarla." />
+  <meta property="og:title" content="Portal de Avances · WeSoft" />
+  <meta property="og:description" content="Tu proyecto de software, a la vista. Fases, tablero, reuniones y un agente que dimensiona cada mejora." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!--LFX_CSS-->
+  <style>
+    /* WeSoft DS (dark-first): --ws-deep #030712 · panel #0f172a · cian #22d3ee · azul #3b82f6 · violeta #8b5cf6 */
+    :root { --bg: #030712; --panel: #0f172a; --txt: #e8eefc; --sub: #9fb3d1; --cian: #22d3ee; --azul: #3b82f6; --violeta: #8b5cf6; --verde: #4ade80; --ambar: #fbbf24;
+      --borde: rgba(148,197,255,.16); --lfx-borde: rgba(148,197,255,.18); --lfx-acento-1: #22d3ee; --lfx-acento-2: #8b5cf6; --lfx-fondo: #030712; }
+    * { font-family: "Plus Jakarta Sans", system-ui, sans-serif; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--txt); overflow-x: hidden; }
+    .mono { font-family: "JetBrains Mono", ui-monospace, monospace; }
+    .sub { color: var(--sub); }
+    .grad { background: linear-gradient(135deg, #a5f3fc 0%, #22d3ee 45%, #a78bfa 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .chip { display: inline-flex; align-items: center; gap: .5rem; font-size: .75rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase;
+      color: var(--cian); padding: .4rem .85rem; border-radius: 999px; border: 1px solid rgba(34,211,238,.35); background: rgba(3,7,18,.6); }
+    .punto-vivo { width: .5rem; height: .5rem; border-radius: 50%; background: var(--verde); box-shadow: 0 0 0 0 rgba(74,222,128,.6); animation: latido 2s infinite; }
+    @keyframes latido { 70% { box-shadow: 0 0 0 10px rgba(74,222,128,0); } 100% { box-shadow: 0 0 0 0 rgba(74,222,128,0); } }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; min-height: 48px; padding: .8rem 1.4rem; border-radius: 999px; font-weight: 800;
+      color: #030712; background: linear-gradient(90deg, #22d3ee, #60a5fa); box-shadow: 0 10px 30px -8px rgba(34,211,238,.55); transition: transform .2s, box-shadow .2s; }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 16px 36px -8px rgba(96,165,250,.6); }
+    .btn-ghost { display: inline-flex; align-items: center; gap: .5rem; min-height: 48px; padding: .8rem 1.3rem; border-radius: 999px; font-weight: 700;
+      color: var(--txt); border: 1px solid rgba(255,255,255,.28); background: rgba(3,7,18,.4); }
+    .btn-ghost:hover { border-color: var(--cian); }
+    .eyebrow { font-size: .78rem; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--cian); }
+    .tarj { background: rgba(15,23,42,.78); border: 1px solid var(--borde); border-radius: 22px; padding: 1.6rem; }
+    a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visible, [tabindex]:focus-visible { outline: 3px solid var(--cian); outline-offset: 3px; }
+
+    /* ---------- Fondo aurora (una sola capa, fija) ---------- */
+    .aurora { position: fixed; inset: 0; z-index: -1; pointer-events: none;
+      background: radial-gradient(60vw 50vh at 85% 8%, rgba(139,92,246,.20), transparent 60%), radial-gradient(55vw 45vh at 8% 30%, rgba(34,211,238,.14), transparent 60%),
+        radial-gradient(70vw 50vh at 50% 110%, rgba(59,130,246,.14), transparent 60%), var(--bg); }
+
+    /* ---------- Nav ---------- */
+    .nav { position: fixed; inset: 0 0 auto 0; z-index: 50; transition: background .3s, border-color .3s; border-bottom: 1px solid transparent; }
+    .nav.solida { background: rgba(3,7,18,.9); border-color: var(--borde); }
+    @supports (backdrop-filter: blur(1px)) { .nav.solida { background: rgba(3,7,18,.72); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); } }
+    .nav a.lnk { color: #c3d2ea; font-weight: 600; font-size: .92rem; } .nav a.lnk:hover { color: #fff; }
+
+    /* ---------- Hero: el portal vivo ---------- */
+    .hero h1 { text-wrap: balance; }
+    .vista { border-radius: 26px; border: 1px solid rgba(148,197,255,.22); background: rgba(15,23,42,.86); box-shadow: 0 40px 100px -20px rgba(0,0,0,.7), 0 0 0 1px rgba(34,211,238,.06) inset; overflow: hidden; }
+    @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .vista { background: rgba(15,23,42,.66); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); } }
+    .vista__barra { display: flex; align-items: center; gap: .5rem; padding: .7rem 1rem; border-bottom: 1px solid var(--borde); font-size: .8rem; color: var(--sub); }
+    .vista__barra i { width: .65rem; height: .65rem; border-radius: 50%; background: #334155; }
+    .estatus { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: .6rem; padding: 1rem; }
+    .estatus > div { border-radius: 14px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.06); padding: .7rem .8rem; min-width: 0; }
+    .estatus span { display: block; font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; color: var(--sub); }
+    .estatus b { display: block; margin-top: .2rem; font-size: 1.05rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .anillo { --p: 62; width: 54px; height: 54px; border-radius: 50%; flex: none; display: grid; place-items: center;
+      background: conic-gradient(var(--cian) calc(var(--p) * 1%), rgba(255,255,255,.08) 0); }
+    .anillo::before { content: ""; grid-area: 1/1; width: 42px; height: 42px; border-radius: 50%; background: #0b1224; }
+    .anillo b { grid-area: 1/1; z-index: 1; font-size: .74rem; white-space: nowrap; letter-spacing: -.02em; }
+    .kan { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: .6rem; padding: 0 1rem 1rem; }
+    .kan__col { border-radius: 14px; background: rgba(255,255,255,.03); padding: .6rem; min-height: 170px; min-width: 0; }
+    .kan__col h4 { font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; color: var(--sub); font-weight: 800; margin-bottom: .5rem; display: flex; justify-content: space-between; }
+    .tk { border-radius: 10px; padding: .55rem .6rem; margin-bottom: .45rem; font-size: .78rem; line-height: 1.3; background: #111c33; border: 1px solid rgba(148,197,255,.14); }
+    .tk small { display: block; margin-top: .3rem; color: var(--sub); font-size: .68rem; }
+    .tk--viaja { border-color: rgba(34,211,238,.6); box-shadow: 0 0 0 3px rgba(34,211,238,.12); }
+    .tag { display: inline-block; font-size: .62rem; font-weight: 800; letter-spacing: .06em; padding: .1rem .4rem; border-radius: 6px; margin-right: .25rem; }
+    .tag--c { background: rgba(34,211,238,.16); color: #a5f3fc; } .tag--v { background: rgba(139,92,246,.2); color: #ddd6fe; } .tag--a { background: rgba(251,191,36,.16); color: #fde68a; }
+    @media (max-width: 520px) { .estatus { grid-template-columns: 1fr 1fr; } .estatus > div:last-child { grid-column: 1 / -1; } .kan { grid-template-columns: 1fr 1fr; } .kan__col:first-child { display: none; } }
+
+    /* ---------- Tres piezas con foco de luz ---------- */
+    .mod { position: relative; overflow: hidden; transition: transform .3s, border-color .3s; }
+    .mod::before { content: ""; position: absolute; inset: 0; background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(34,211,238,.14), transparent 45%); opacity: 0; transition: opacity .3s; pointer-events: none; }
+    @media (hover: hover) and (pointer: fine) { .mod:hover { transform: translateY(-4px); border-color: rgba(34,211,238,.45); } .mod:hover::before { opacity: 1; } }
+    .mod__ico { width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; font-size: 1.5rem; background: rgba(34,211,238,.1); border: 1px solid rgba(34,211,238,.3); }
+    .mod ul li { display: flex; gap: .55rem; margin-top: .55rem; color: #c3d2ea; font-size: .95rem; }
+    .mod ul li::before { content: "→"; color: var(--cian); font-weight: 800; }
+
+    /* ---------- Portal en tablet ---------- */
+    .pt { background: #0a1122; color: var(--txt); }
+    .pt__barra { display: flex; flex-wrap: wrap; gap: .8rem; justify-content: space-between; align-items: center; padding: .9rem 1.2rem; border-bottom: 1px solid var(--borde); background: #0d1630; }
+    .pt__tabs { display: flex; gap: .35rem; padding: .8rem 1.2rem 0; overflow-x: auto; overflow-y: hidden; }
+    .pt__tab { min-height: 44px; padding: .5rem 1rem; border-radius: 999px; font-weight: 700; font-size: .88rem; color: #c3d2ea; border: 1px solid transparent; white-space: nowrap; }
+    .pt__tab[aria-selected="true"] { color: #030712; background: linear-gradient(90deg, #22d3ee, #60a5fa); }
+    .pt__tab:not([aria-selected="true"]):hover { border-color: var(--borde); }
+    .pt__panel { padding: 1.1rem 1.2rem 1.3rem; min-height: 340px; animation: entra .45s cubic-bezier(.22,1,.36,1) both; }
+    @keyframes entra { from { opacity: 0; transform: translateY(10px); } }
+    .fase { display: grid; grid-template-columns: 2rem 1fr auto; gap: .8rem; align-items: center; padding: .75rem .9rem; border-radius: 14px; background: rgba(255,255,255,.035); margin-bottom: .5rem; }
+    .fase__n { width: 2rem; height: 2rem; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: .8rem; background: rgba(255,255,255,.08); }
+    .fase--ok .fase__n { background: #166534; color: #dcfce7; } .fase--act .fase__n { background: #0e7490; color: #fff; box-shadow: 0 0 0 4px rgba(34,211,238,.2); }
+    .fase__bar { height: 6px; border-radius: 9px; background: rgba(255,255,255,.08); margin-top: .4rem; overflow: hidden; }
+    .fase__bar i { display: block; height: 100%; border-radius: 9px; background: linear-gradient(90deg, #22d3ee, #8b5cf6); width: var(--w); transition: width 1s cubic-bezier(.22,1,.36,1); }
+    .pt__scroll { overflow-x: auto; overflow-y: hidden; padding-bottom: .3rem; }
+    .pt__kan { display: grid; grid-template-columns: repeat(4, minmax(170px, 1fr)); gap: .7rem; }
+    .reu { display: grid; grid-template-columns: auto 1fr; gap: .9rem; padding: .85rem .9rem; border-radius: 14px; background: rgba(255,255,255,.035); margin-bottom: .55rem; }
+    .reu__fecha { width: 3.4rem; text-align: center; border-radius: 12px; padding: .35rem 0; background: rgba(139,92,246,.18); }
+    .reu__fecha b { display: block; font-size: 1.25rem; line-height: 1.1; } .reu__fecha span { font-size: .66rem; text-transform: uppercase; letter-spacing: .08em; color: #ddd6fe; }
+    .doc { display: flex; align-items: center; justify-content: space-between; gap: .8rem; padding: .8rem .9rem; border-radius: 14px; background: rgba(255,255,255,.035); margin-bottom: .5rem; }
+    .est { display: inline-flex; align-items: center; gap: .35rem; font-size: .75rem; font-weight: 800; padding: .25rem .6rem; border-radius: 999px; white-space: nowrap; }
+    .est--ok { background: rgba(74,222,128,.14); color: #bbf7d0; } .est--pend { background: rgba(251,191,36,.14); color: #fde68a; } .est--rev { background: rgba(34,211,238,.14); color: #a5f3fc; }
+
+    /* ---------- Agente de mejoras (chat) ---------- */
+    .chat { width: min(380px, 100%); margin: 0 auto; border-radius: 34px; padding: 12px; background: linear-gradient(160deg, #1e293b, #0b1220);
+      box-shadow: 0 40px 90px rgba(0,0,0,.6), inset 0 0 0 1px rgba(255,255,255,.12); }
+    .chat__pantalla { border-radius: 24px; overflow: hidden; background: #0a1122; min-height: 560px; display: flex; flex-direction: column; }
+    .chat__barra { display: flex; align-items: center; gap: .7rem; padding: .9rem 1rem; background: #0d1630; border-bottom: 1px solid var(--borde); }
+    .chat__av { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; background: linear-gradient(135deg, #22d3ee, #8b5cf6); font-size: 1.1rem; }
+    .chat__cuerpo { flex: 1; padding: 1rem .8rem; display: flex; flex-direction: column; gap: .6rem; }
+    .bur { max-width: 90%; border-radius: 14px; font-size: .84rem; line-height: 1.5; padding: .55rem .7rem; opacity: 0; transform: translateY(14px) scale(.97);
+      transition: opacity .45s, transform .45s cubic-bezier(.34,1.56,.64,1); }
+    .bur.ve { opacity: 1; transform: none; }
+    .bur--cli { align-self: flex-end; background: #1d4ed8; color: #fff; border-bottom-right-radius: 4px; }
+    .bur--ag { align-self: flex-start; background: #16213d; border: 1px solid var(--borde); border-bottom-left-radius: 4px; }
+    .bur--ws { align-self: center; background: rgba(139,92,246,.18); border: 1px solid rgba(139,92,246,.4); color: #ede9fe; font-size: .78rem; text-align: center; }
+    .bur--ok { align-self: center; background: rgba(74,222,128,.14); border: 1px solid rgba(74,222,128,.35); color: #dcfce7; font-size: .78rem; text-align: center; }
+    .bur small { display: block; margin-top: .25rem; font-size: .68rem; opacity: .8; }
+    .dim { display: grid; grid-template-columns: 1fr 1fr; gap: .35rem; margin-top: .45rem; }
+    .dim span { border-radius: 8px; background: rgba(255,255,255,.05); padding: .3rem .45rem; font-size: .72rem; }
+    .dim b { display: block; font-size: .8rem; }
+    .pasos-ag li { display: grid; grid-template-columns: 2.4rem 1fr; gap: .9rem; padding: 1rem 0; border-bottom: 1px solid rgba(255,255,255,.07); }
+    .pasos-ag li:last-child { border-bottom: 0; }
+    .pasos-ag .num { width: 2.4rem; height: 2.4rem; border-radius: 12px; display: grid; place-items: center; font-weight: 800; color: #030712; background: linear-gradient(135deg, #22d3ee, #60a5fa); }
+    @media (prefers-reduced-motion: reduce) { .bur { opacity: 1; transform: none; transition: none; } .punto-vivo { animation: none; } }
+
+    /* ---------- Formulario y kit ---------- */
+    .campo input { width: 100%; border-radius: 14px; padding: .85rem 2.6rem .85rem 1rem; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.16); color: var(--txt); }
+    .campo input::placeholder { color: #8b98ab; }
+    .campo span.etq { display: block; font-size: .85rem; font-weight: 700; margin-bottom: .35rem; }
+    .lfx-avance { background: rgba(255,255,255,.1); }
+    .lfx-tl__punto { background: #0b1224; }
+    .faq details { border-radius: 18px; background: rgba(15,23,42,.78); border: 1px solid var(--borde); }
+    .faq summary { cursor: pointer; list-style: none; padding: 1.1rem 3rem 1.1rem 1.25rem; font-weight: 700; position: relative; min-height: 44px; }
+    .faq summary::-webkit-details-marker { display: none; }
+    .faq summary::after { content: "+"; position: absolute; right: 1.25rem; top: 50%; transform: translateY(-50%); font-size: 1.4rem; color: var(--cian); transition: transform .3s; }
+    .faq details[open] summary::after { transform: translateY(-50%) rotate(45deg); }
+    .faq details p { padding: 0 1.25rem 1.2rem; color: #c3d2ea; line-height: 1.65; }
+
+    /* ---------- Revelado al entrar (cascada) ---------- */
+    .rv { opacity: 0; transform: translateY(18px); transition: opacity .7s cubic-bezier(.22,1,.36,1), transform .7s cubic-bezier(.22,1,.36,1); transition-delay: calc(var(--i, 0) * 90ms); }
+    .rv.ve { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+      .rv { opacity: 1; transform: none; }
+    }
+    @media print { .nav, .aurora { display: none !important; } .rv, .bur { opacity: 1 !important; transform: none !important; } }
+  </style>
+</head>
+<body>
+  <div class="aurora" aria-hidden="true"></div>
+
+  <!-- ===================== NAV ===================== -->
+  <nav class="nav" id="nav" aria-label="Principal">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+      <a href="#inicio" class="flex items-center gap-2 font-extrabold tracking-tight"><span class="text-xl" aria-hidden="true">🧭</span><span>Portal de <span class="grad">Avances</span></span></a>
+      <div class="hidden lg:flex gap-7">
+        <a class="lnk" href="#piezas">Las 3 piezas</a><a class="lnk" href="#portal">El portal</a><a class="lnk" href="#agente">Agente de mejoras</a>
+        <a class="lnk" href="#ruta">Ruta</a><a class="lnk" href="#faq">Preguntas</a>
+      </div>
+      <a href="#contacto" class="btn !min-h-[42px] !py-2 !px-4 text-sm">Quiero verlo</a>
+    </div>
+  </nav>
+
+  <!-- ===================== HERO ===================== -->
+  <header id="inicio" class="hero px-4 sm:px-6 pt-28 pb-16 lg:pt-36">
+    <div class="max-w-7xl mx-auto grid lg:grid-cols-[1fr_1.05fr] gap-12 items-center">
+      <div>
+        <span class="chip rv"><span class="punto-vivo" aria-hidden="true"></span> Iniciativa WeSoft · 2026</span>
+        <h1 class="rv mt-6 text-4xl sm:text-6xl font-extrabold leading-[1.05] tracking-tight" style="--i:1">Tu proyecto de software, <span class="grad">a la vista</span>.</h1>
+        <p class="rv mt-6 text-lg sub max-w-xl leading-relaxed" style="--i:2">Tu cliente entra con su usuario y ve en qué fase va su proyecto, qué se hizo esta semana, cuándo es la próxima reunión y qué espera de él. Detrás, un cerebro con agentes arma los documentos y dimensiona cada idea nueva antes de cotizarla.</p>
+        <div class="rv mt-9 flex flex-wrap gap-3" style="--i:3">
+          <a href="#portal" class="btn">Ver el portal →</a>
+          <a href="#agente" class="btn-ghost">Cómo se cotiza una mejora</a>
+        </div>
+        <p class="rv mt-6 text-sm sub" style="--i:4">Menos «¿cómo vamos?» por WhatsApp. Cada cambio con alcance y precio validado antes de empezar.</p>
+      </div>
+
+      <div class="rv" style="--i:2">
+        <div class="vista" id="hero-vista" aria-label="Vista de ejemplo del portal de un cliente (datos ficticios)" role="img">
+          <div class="vista__barra"><i></i><i></i><i></i><span class="ml-2 truncate">portal.wesoft · Proyecto demo · App de citas</span></div>
+          <div class="estatus">
+            <div class="flex items-center gap-3"><div class="anillo" id="hero-anillo"><b><span data-cuenta="62">62</span>%</b></div><div class="min-w-0"><span>Avance</span><b>Fase 3 de 5</b></div></div>
+            <div><span>Próxima reunión</span><b>Jue · 11:00</b></div>
+            <div><span>Te toca</span><b class="text-amber-200">Aprobar diseño</b></div>
+          </div>
+          <div class="kan" id="hero-kan">
+            <div class="kan__col"><h4>Por hacer <em class="not-italic">2</em></h4>
+              <div class="tk"><span class="tag tag--v">Mejora</span>Recordatorios por WhatsApp<small>Aprobada por el cliente</small></div>
+              <div class="tk">Reporte mensual en PDF<small>Fase 4</small></div></div>
+            <div class="kan__col" data-col="curso"><h4>En curso <em class="not-italic" data-n>2</em></h4>
+              <div class="tk tk--viaja" id="tk-viaja"><span class="tag tag--c">Fase 3</span>Agenda del médico<small>Raúl · vence vie</small></div>
+              <div class="tk"><span class="tag tag--c">Fase 3</span>Alta de pacientes<small>Socio 2 · vence lun</small></div></div>
+            <div class="kan__col" data-col="rev"><h4>En revisión <em class="not-italic" data-n>1</em></h4>
+              <div class="tk"><span class="tag tag--a">Entrega</span>Diseño de pantallas<small>Esperando tu visto bueno</small></div></div>
+          </div>
+        </div>
+        <p class="text-xs sub mt-3 text-center">Vista de ejemplo con datos ficticios.</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================== EL PROBLEMA ===================== -->
+  <section class="px-4 sm:px-6 py-16" aria-labelledby="dolor-t">
+    <div class="max-w-7xl mx-auto">
+      <p class="eyebrow rv">El problema de hoy</p>
+      <h2 id="dolor-t" class="rv mt-3 text-3xl sm:text-4xl font-extrabold max-w-3xl" style="--i:1">En una fábrica de software pequeña, el tiempo se va en lo que no es código.</h2>
+      <div class="mt-10 grid md:grid-cols-3 gap-5">
+        <article class="tarj rv" style="--i:1"><p class="text-3xl" aria-hidden="true">📝</p><h3 class="mt-3 text-xl font-bold">Reportes a mano</h3><p class="mt-2 sub leading-relaxed">Cada semana se arma a mano el avance de cada proyecto. Cuando se junta el trabajo, el reporte se retrasa.</p></article>
+        <article class="tarj rv" style="--i:2"><p class="text-3xl" aria-hidden="true">💬</p><h3 class="mt-3 text-xl font-bold">«¿Cómo vamos?»</h3><p class="mt-2 sub leading-relaxed">El cliente no ve el avance, así que pregunta por WhatsApp. Las respuestas quedan regadas en chats y correos.</p></article>
+        <article class="tarj rv" style="--i:3"><p class="text-3xl" aria-hidden="true">🧩</p><h3 class="mt-3 text-xl font-bold">Cambios sin precio</h3><p class="mt-2 sub leading-relaxed">Las mejoras llegan sin dimensionar. Se empiezan a hacer y el precio se discute después.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== LAS TRES PIEZAS ===================== -->
+  <section id="piezas" class="px-4 sm:px-6 py-16" aria-labelledby="piezas-t">
+    <div class="max-w-7xl mx-auto">
+      <p class="eyebrow">La solución</p>
+      <h2 id="piezas-t" class="mt-3 text-3xl sm:text-5xl font-extrabold max-w-3xl">Tres piezas, <span class="grad">un solo lugar</span>.</h2>
+      <div class="mt-10 grid lg:grid-cols-3 gap-5">
+        <article class="tarj mod rv" style="--i:1"><div class="mod__ico" aria-hidden="true">🧠</div><h3 class="mt-5 text-2xl font-bold">El cerebro</h3><p class="mt-2 sub">Uso interno de WeSoft.</p>
+          <ul><li>Ficha de cada cliente, negociación y proyecto.</li><li>Genera análisis, diseño, propuesta económica, minutas, contratos y anexos acordes al negocio.</li><li>Minutas de cada reunión que se vuelven tareas del tablero.</li></ul></article>
+        <article class="tarj mod rv" style="--i:2"><div class="mod__ico" aria-hidden="true">🗂️</div><h3 class="mt-5 text-2xl font-bold">El portal del cliente</h3><p class="mt-2 sub">Con usuario y contraseña.</p>
+          <ul><li>Fases con % de avance y tablero kanban, como un Linear para el cliente.</li><li>Reuniones con su minuta, reporte semanal, documentos y pagos.</li><li>Cada cliente ve solo su proyecto.</li></ul></article>
+        <article class="tarj mod rv" style="--i:3"><div class="mod__ico" aria-hidden="true">🤖</div><h3 class="mt-5 text-2xl font-bold">El agente de mejoras</h3><p class="mt-2 sub">Dudas, ideas y errores.</p>
+          <ul><li>El cliente escribe lo que se le ocurre o lo que falló.</li><li>Los agentes dimensionan alcance, horas y precio.</li><li>WeSoft valida; el cliente aprueba y entra al tablero.</li></ul></article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== EL PORTAL EN TABLET ===================== -->
+  <section id="portal" class="px-4 sm:px-6 py-16 overflow-hidden" aria-labelledby="portal-t">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center max-w-3xl mx-auto">
+        <p class="eyebrow">El portal</p>
+        <h2 id="portal-t" class="mt-3 text-3xl sm:text-5xl font-extrabold">Lo que ve tu cliente <span class="grad">al entrar</span>.</h2>
+        <p class="mt-4 sub">Fases, tablero, reuniones y documentos. Toca las pestañas: es una vista de ejemplo con datos ficticios.</p>
+      </div>
+      <div class="lfx-tablet mt-12" data-lfx="tablet">
+        <div class="lfx-tablet__card">
+          <div class="lfx-tablet__pantalla pt">
+            <div class="pt__barra">
+              <div class="flex items-center gap-2"><span class="punto-vivo" aria-hidden="true"></span><b>Proyecto demo</b> <span class="text-sm sub">· App de citas</span></div>
+              <div class="flex items-center gap-2 text-sm"><span class="est est--pend">Pago 2 · vence en 9 días</span><span class="est est--rev">1 firma pendiente</span></div>
+            </div>
+            <div class="pt__tabs" role="tablist" aria-label="Secciones del portal">
+              <button class="pt__tab" role="tab" aria-selected="true" aria-controls="pt-panel" data-tab="fases">Fases</button>
+              <button class="pt__tab" role="tab" aria-selected="false" aria-controls="pt-panel" data-tab="kanban" tabindex="-1">Tablero</button>
+              <button class="pt__tab" role="tab" aria-selected="false" aria-controls="pt-panel" data-tab="reuniones" tabindex="-1">Reuniones</button>
+              <button class="pt__tab" role="tab" aria-selected="false" aria-controls="pt-panel" data-tab="docs" tabindex="-1">Documentos</button>
+            </div>
+            <div class="pt__panel" id="pt-panel" role="tabpanel" tabindex="0"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== AGENTE DE MEJORAS ===================== -->
+  <section id="agente" class="px-4 sm:px-6 py-16 overflow-hidden" aria-labelledby="ag-t">
+    <div class="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
+      <div>
+        <p class="eyebrow">Agente de mejoras</p>
+        <h2 id="ag-t" class="mt-3 text-3xl sm:text-5xl font-extrabold">Una idea del cliente, <span class="grad">cotizada antes de empezar</span>.</h2>
+        <ol class="pasos-ag mt-8">
+          <li><span class="num">1</span><div><h3 class="font-bold text-lg">El cliente escribe</h3><p class="sub">Una duda, una mejora que se le ocurrió o un error con su captura.</p></div></li>
+          <li><span class="num">2</span><div><h3 class="font-bold text-lg">El agente clasifica y dimensiona</h3><p class="sub">Duda, mejora o error. Si es mejora: qué toca, horas estimadas, riesgo y precio propuesto con la tabla de costos de WeSoft.</p></div></li>
+          <li><span class="num">3</span><div><h3 class="font-bold text-lg">WeSoft valida</h3><p class="sub">Un socio revisa alcance y precio. Nada llega al cliente sin ese paso.</p></div></li>
+          <li><span class="num">4</span><div><h3 class="font-bold text-lg">El cliente decide</h3><p class="sub">Aprueba o rechaza. Si aprueba, entra al tablero como cambio de alcance con su pago, y queda en la bitácora.</p></div></li>
+        </ol>
+      </div>
+      <div class="chat" id="chat" aria-label="Conversación de ejemplo con el agente de mejoras (datos ficticios)">
+        <div class="chat__pantalla">
+          <div class="chat__barra"><span class="chat__av" aria-hidden="true">🤖</span><div><b class="block text-sm">Agente de mejoras</b><span class="text-xs sub">Proyecto demo · App de citas</span></div></div>
+          <div class="chat__cuerpo">
+            <p class="bur bur--cli">¿Podemos mandar recordatorios por WhatsApp un día antes de cada cita?<small>Cliente · 10:12</small></p>
+            <div class="bur bur--ag">Lo clasifiqué como <b>mejora</b> (cambio de alcance). Mi dimensionamiento:
+              <div class="dim"><span>Toca<b>Agenda + WhatsApp</b></span><span>Estimado<b>~16 h</b></span><span>Riesgo<b>Bajo</b></span><span>Fase<b>3 · Construcción</b></span></div>
+              <small>Agente · 10:12 · es una estimación, no un compromiso</small></div>
+            <p class="bur bur--ws">✔ WeSoft revisó alcance y precio · propuesta lista</p>
+            <p class="bur bur--cli">Aprobada 👍<small>Cliente · 12:40</small></p>
+            <p class="bur bur--ok">Entró al tablero · Por hacer · Fase 3<br />Pago agregado al calendario</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== RUTA ===================== -->
+  <section id="ruta" class="lfx-tl px-4 sm:px-6" data-lfx="timeline" aria-labelledby="ruta-t">
+    <div class="lfx-tl__pin py-16">
+      <div class="max-w-7xl mx-auto w-full">
+        <p class="eyebrow">La ruta</p>
+        <h2 id="ruta-t" class="mt-3 text-3xl sm:text-5xl font-extrabold">Primero en casa, <span class="grad">después para todos</span>.</h2>
+      </div>
+      <div class="lfx-tl__vista max-w-7xl mx-auto w-full mt-8">
+        <ol class="lfx-tl__pista">
+          <li class="lfx-tl__relleno" aria-hidden="true"></li>
+          <li class="lfx-tl__hito lfx-tl__hito--arriba"><span class="lfx-tl__punto"></span><span class="lfx-tl__tallo"></span><div class="lfx-tl__txt"><p class="mono text-xs text-cyan-300">Fase 0</p><h3 class="font-bold text-lg">Esta landing</h3><p class="text-sm text-slate-300">La idea, a la vista, y una lista de interesados.</p></div></li>
+          <li class="lfx-tl__hito lfx-tl__hito--abajo"><span class="lfx-tl__punto"></span><span class="lfx-tl__tallo"></span><div class="lfx-tl__txt"><p class="mono text-xs text-cyan-300">Fase 1</p><h3 class="font-bold text-lg">Piloto interno</h3><p class="text-sm text-slate-300">Fases, tablero, reuniones y reporte semanal en un proyecto propio. Se miden dos semanas de tiempos.</p></div></li>
+          <li class="lfx-tl__hito lfx-tl__hito--arriba"><span class="lfx-tl__punto"></span><span class="lfx-tl__tallo"></span><div class="lfx-tl__txt"><p class="mono text-xs text-cyan-300">Fase 2</p><h3 class="font-bold text-lg">Primer cliente</h3><p class="text-sm text-slate-300">Acceso con usuario para un cliente actual de WeSoft.</p></div></li>
+          <li class="lfx-tl__hito lfx-tl__hito--abajo"><span class="lfx-tl__punto"></span><span class="lfx-tl__tallo"></span><div class="lfx-tl__txt"><p class="mono text-xs text-cyan-300">Fase 3</p><h3 class="font-bold text-lg">Agente de mejoras</h3><p class="text-sm text-slate-300">Dudas, mejoras y errores con dimensionamiento y precio validado.</p></div></li>
+          <li class="lfx-tl__hito lfx-tl__hito--arriba"><span class="lfx-tl__punto"></span><span class="lfx-tl__tallo"></span><div class="lfx-tl__txt"><p class="mono text-xs text-cyan-300">Fase 4</p><h3 class="font-bold text-lg">Cerebro completo</h3><p class="text-sm text-slate-300">Documentos de cada negociación desde el mismo sistema.</p></div></li>
+          <li class="lfx-tl__hito lfx-tl__hito--abajo"><span class="lfx-tl__punto"></span><span class="lfx-tl__tallo"></span><div class="lfx-tl__txt"><p class="mono text-xs text-cyan-300">Fase 5</p><h3 class="font-bold text-lg">Producto</h3><p class="text-sm text-slate-300">Repositorio propio y multi-cliente, para otras fábricas pequeñas.</p></div></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CONFIANZA ===================== -->
+  <section class="px-4 sm:px-6 py-16" aria-labelledby="conf-t">
+    <div class="max-w-7xl mx-auto">
+      <p class="eyebrow rv">Hecho con cuidado</p>
+      <h2 id="conf-t" class="rv mt-3 text-3xl sm:text-4xl font-extrabold max-w-3xl" style="--i:1">La IA propone. <span class="grad">Una persona decide</span>.</h2>
+      <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <article class="tarj rv" style="--i:1"><h3 class="font-bold text-lg">🔒 Cada cliente ve solo lo suyo</h3><p class="mt-2 sub">Permisos por fila desde el diseño. Es lo primero que se prueba.</p></article>
+        <article class="tarj rv" style="--i:2"><h3 class="font-bold text-lg">🧑‍💼 Humano en el ciclo</h3><p class="mt-2 sub">El dimensionamiento es una propuesta. El precio lo valida un socio de WeSoft.</p></article>
+        <article class="tarj rv" style="--i:3"><h3 class="font-bold text-lg">🛡️ El cliente no le da órdenes al agente</h3><p class="mt-2 sub">Lo que escribe es dato, no instrucción. El agente no puede publicar ni cobrar.</p></article>
+        <article class="tarj rv" style="--i:1"><h3 class="font-bold text-lg">✍️ Firmas con validez</h3><p class="mt-2 sub">Proveedor de firma con constancia NOM-151, no un simple clic.</p></article>
+        <article class="tarj rv" style="--i:2"><h3 class="font-bold text-lg">💳 Pagos por pasarela</h3><p class="mt-2 sub">Stripe, Mercado Pago o Conekta. El portal nunca guarda tarjetas.</p></article>
+        <article class="tarj rv" style="--i:3"><h3 class="font-bold text-lg">📜 Bitácora de decisiones</h3><p class="mt-2 sub">Quién pidió, quién aprobó, cuándo y a qué precio. Para cualquier aclaración.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FAQ ===================== -->
+  <section id="faq" class="px-4 sm:px-6 py-16" aria-labelledby="faq-t">
+    <div class="max-w-6xl mx-auto grid lg:grid-cols-[.8fr_1.2fr] gap-10">
+      <div><p class="eyebrow">Preguntas frecuentes</p><h2 id="faq-t" class="mt-3 text-3xl sm:text-4xl font-extrabold">Lo que querrás saber</h2></div>
+      <div class="faq grid gap-3" data-lfx="faq">
+        <details><summary>¿Es otro Trello o Linear?</summary><p>No. El tablero es una parte; lo que lo hace distinto es que el cliente ve su proyecto por fases, con reuniones, documentos y pagos, y que cada mejora llega cotizada y validada antes de entrar al tablero.</p></details>
+        <details><summary>¿La IA pone los precios?</summary><p>La IA propone un dimensionamiento con la tabla de costos de WeSoft. El precio final siempre lo valida un socio antes de que el cliente lo vea.</p></details>
+        <details><summary>¿Quién escribe el reporte semanal?</summary><p>Un agente redacta el borrador con las tareas, entregas y reuniones de la semana. Un socio lo revisa y lo publica.</p></details>
+        <details><summary>¿Mis datos los ven otros clientes?</summary><p>No. Cada cliente entra con su usuario y solo ve su proyecto. El aislamiento entre clientes es lo primero que se construye y se prueba.</p></details>
+        <details><summary>¿Cuándo estará listo?</summary><p>Va por fases: primero un piloto con un proyecto propio, luego un cliente actual. Si te interesa, déjanos tus datos y te avisamos.</p></details>
+        <details><summary>¿Cuánto costará?</summary><p>Aún no hay precio público. Primero se mide el piloto; después se arma la propuesta.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CONTACTO ===================== -->
+  <section id="contacto" class="px-4 sm:px-6 py-16" aria-labelledby="ct-t">
+    <div class="max-w-6xl mx-auto grid lg:grid-cols-2 gap-10 items-start">
+      <div>
+        <p class="eyebrow">Siguiente paso</p>
+        <h2 id="ct-t" class="mt-3 text-3xl sm:text-5xl font-extrabold">¿Quieres verlo con <span class="grad">tu proyecto</span>?</h2>
+        <p class="mt-5 sub text-lg">Déjanos tus datos y te mostramos el portal en cuanto esté el piloto. Sin compromiso.</p>
+      </div>
+      <form id="form-interes" class="tarj" novalidate>
+        <div class="flex justify-between text-xs sub mb-2"><span>Tu solicitud</span><span data-lfx-cuenta></span></div>
+        <div class="lfx-avance mb-6"><i></i></div>
+        <label class="lfx-campo campo mb-4"><span class="etq">Nombre</span><input name="nombre" autocomplete="name" placeholder="¿Cómo te llamas?" /><span class="lfx-ok" aria-hidden="true">✓</span></label>
+        <label class="lfx-campo campo mb-4"><span class="etq">Empresa</span><input name="empresa" autocomplete="organization" placeholder="Tu negocio" /><span class="lfx-ok" aria-hidden="true">✓</span></label>
+        <label class="lfx-campo campo mb-6"><span class="etq">¿Cuántos proyectos llevas a la vez?</span><input name="proyectos" inputmode="numeric" placeholder="Ej. 3" /><span class="lfx-ok" aria-hidden="true">✓</span></label>
+        <button type="submit" class="btn w-full">Quiero verlo · WhatsApp</button>
+        <p data-lfx-nota class="text-sm mt-3 min-h-[1.25rem] sub" aria-live="polite"></p>
+        <p class="text-sm mt-1 opacity-90">¿Prefieres correo? <a class="underline font-semibold" href="mailto:raul.garcia@wesoft.solutions">raul.garcia@wesoft.solutions</a></p>
+      </form>
+    </div>
+  </section>
+
+  <footer class="px-4 sm:px-6 py-10 border-t border-white/10">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4 text-sm sub">
+      <span class="flex items-center gap-2"><img src="media/wesoft-logo.png" alt="WeSoft Solutions" width="36" height="36" class="h-9 w-auto" /> Una iniciativa de WeSoft Solutions</span>
+      <span>Portal de Avances · 2026</span>
+    </div>
+  </footer>
+
+  <!--LFX_JS-->
+  <script>
+    (() => {
+      const menosMov = LandingFx.menosMov;
+      LandingFx.auto();
+
+      // Nav sólida al bajar
+      const nav = document.getElementById("nav");
+      const navSolida = () => nav.classList.toggle("solida", scrollY > 30);
+      addEventListener("scroll", navSolida, { passive: true }); navSolida();
+
+      // Revelado en cascada
+      const io = new IntersectionObserver((ents) => ents.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("ve"); io.unobserve(e.target); } }), { threshold: .15 });
+      document.querySelectorAll(".rv").forEach((el) => io.observe(el));
+
+      // Foco de luz en las tres piezas (solo puntero fino)
+      if (matchMedia("(hover:hover) and (pointer:fine)").matches) document.querySelectorAll(".mod").forEach((m) => m.addEventListener("pointermove", (ev) => {
+        const r = m.getBoundingClientRect(); m.style.setProperty("--mx", ev.clientX - r.left + "px"); m.style.setProperty("--my", ev.clientY - r.top + "px");
+      }));
+
+      // Hero: la tarjeta viaja de «En curso» a «En revisión» y vuelve (FLIP), el avance sube
+      const tk = document.getElementById("tk-viaja"), kan = document.getElementById("hero-kan");
+      const colCurso = kan.querySelector('[data-col="curso"]'), colRev = kan.querySelector('[data-col="rev"]');
+      const anillo = document.getElementById("hero-anillo"), num = anillo.querySelector("[data-cuenta]");
+      const contar = () => { colCurso.querySelector("[data-n]").textContent = colCurso.querySelectorAll(".tk").length; colRev.querySelector("[data-n]").textContent = colRev.querySelectorAll(".tk").length; };
+      function mover(destino, p) {
+        const a = tk.getBoundingClientRect();
+        destino.insertBefore(tk, destino.querySelector(".tk")); contar();
+        const b = tk.getBoundingClientRect();
+        tk.animate([{ transform: `translate(${a.left - b.left}px, ${a.top - b.top}px) rotate(-2deg)` }, { transform: "none" }], { duration: 700, easing: "cubic-bezier(.22,1,.36,1)" });
+        anillo.style.setProperty("--p", p); num.textContent = p;
+        tk.querySelector("small").textContent = destino === colRev ? "Listo · esperando tu visto bueno" : "Raúl · vence vie";
+      }
+      if (!menosMov) { let enRev = false; setInterval(() => { if (document.hidden) return; enRev = !enRev; mover(enRev ? colRev : colCurso, enRev ? 68 : 62); }, 3600); }
+
+      // Portal: pestañas (datos ficticios)
+      const P = {
+        fases: () => [["Análisis", 100, "ok"], ["Diseño", 100, "ok"], ["Construcción", 62, "act"], ["Pruebas", 0, ""], ["Entrega y soporte", 0, ""]].map(([n, w, e], i) => `
+          <div class="fase ${e ? "fase--" + e : ""}"><span class="fase__n">${e === "ok" ? "✓" : i + 1}</span>
+            <div><b>${n}</b><div class="fase__bar"><i style="--w:0%" data-w="${w}%"></i></div></div>
+            <span class="est ${e === "ok" ? "est--ok" : e === "act" ? "est--rev" : "est--pend"}">${e === "ok" ? "Aprobada" : e === "act" ? w + "%" : "Pendiente"}</span></div>`).join(""),
+        kanban: () => `<div class="pt__scroll"><div class="pt__kan">${[
+            ["Por hacer", [["Mejora", "v", "Recordatorios por WhatsApp", "Aprobada por ti · 16 h"], ["Fase 4", "c", "Reporte mensual en PDF", "Planeada"]]],
+            ["En curso", [["Fase 3", "c", "Agenda del médico", "Raúl · vence vie"], ["Fase 3", "c", "Alta de pacientes", "Socio 2 · vence lun"]]],
+            ["En revisión", [["Entrega", "a", "Diseño de pantallas", "Esperando tu visto bueno"]]],
+            ["Hecho", [["Fase 2", "c", "Prototipo navegable", "Aprobado 12-oct"], ["Fase 1", "c", "Análisis y alcance", "Aprobado 28-sep"]]],
+          ].map(([t, ts]) => `<div class="kan__col"><h4>${t} <em class="not-italic">${ts.length}</em></h4>${ts.map(([g, c, x, s]) => `<div class="tk"><span class="tag tag--${c}">${g}</span>${x}<small>${s}</small></div>`).join("")}</div>`).join("")}</div></div>`,
+        reuniones: () => [["06", "nov", "Revisión de avance · Fase 3", "Próxima · enlace disponible el día de la reunión", "est--rev", "Próxima"], ["30", "oct", "Demo del prototipo", "Minuta: 4 acuerdos · 3 tareas nuevas en el tablero", "est--ok", "Con minuta"], ["23", "oct", "Ajustes de diseño", "Minuta: 2 acuerdos · grabación disponible", "est--ok", "Con minuta"]]
+          .map(([d, m, t, s, c, e]) => `<div class="reu"><div class="reu__fecha"><b>${d}</b><span>${m}</span></div><div><div class="flex flex-wrap items-center justify-between gap-2"><b>${t}</b><span class="est ${c}">${e}</span></div><p class="text-sm sub mt-1">${s}</p></div></div>`).join(""),
+        docs: () => [["📄 Análisis y diseño", "v1.2 · aprobado", "est--ok", "Aprobado"], ["💰 Propuesta económica", "Costo real · firmada", "est--ok", "Firmada"], ["✍️ Anexo · cambio de alcance", "Recordatorios por WhatsApp", "est--pend", "Por firmar"], ["🧾 Factura · pago 2", "Vence en 9 días", "est--pend", "Pendiente"]]
+          .map(([t, s, c, e]) => `<div class="doc"><div class="min-w-0"><b>${t}</b><p class="text-sm sub truncate">${s}</p></div><span class="est ${c}">${e}</span></div>`).join(""),
+      };
+      const tabs = [...document.querySelectorAll(".pt__tab")], panel = document.getElementById("pt-panel");
+      function abrir(tab, foco) {
+        tabs.forEach((t) => { const on = t === tab; t.setAttribute("aria-selected", on); t.tabIndex = on ? 0 : -1; });
+        panel.style.animation = "none"; panel.offsetHeight; panel.style.animation = "";
+        panel.innerHTML = P[tab.dataset.tab](); panel.setAttribute("aria-label", tab.textContent);
+        requestAnimationFrame(() => panel.querySelectorAll("[data-w]").forEach((i) => i.style.setProperty("--w", i.dataset.w)));
+        if (foco) tab.focus();
+      }
+      tabs.forEach((t, i) => {
+        t.addEventListener("click", () => abrir(t));
+        t.addEventListener("keydown", (e) => { const d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0; if (d) { e.preventDefault(); abrir(tabs[(i + d + tabs.length) % tabs.length], true); } });
+      });
+      abrir(tabs[0]);
+
+      // Chat del agente: los mensajes llegan uno por uno
+      const chat = document.getElementById("chat"), burs = [...chat.querySelectorAll(".bur")];
+      new IntersectionObserver(([e], o) => { if (!e.isIntersecting) return; o.disconnect();
+        burs.forEach((b, i) => setTimeout(() => b.classList.add("ve"), menosMov ? 0 : 300 + i * 1100)); }, { threshold: .35 }).observe(chat);
+
+      // Formulario → WhatsApp de WeSoft
+      LandingFx.formulario(document.getElementById("form-interes"), {
+        colores: ["#22d3ee", "#60a5fa", "#8b5cf6", "#a5f3fc", "#ffffff"],
+        reglas: { nombre: (v) => v.trim().length >= 3, empresa: (v) => v.trim().length >= 2, proyectos: (v) => /^\d{1,3}$/.test(v.trim()) },
+        alEnviar(d) {
+          const txt = `Hola, soy ${d.nombre} de ${d.empresa}. Me interesa el Portal de Avances de WeSoft; llevo ${d.proyectos} proyecto(s) a la vez.`;
+          window.open(`https://wa.me/5215578492776?text=${encodeURIComponent(txt)}`, "_blank", "noopener");
+        },
+      });
+    })();
+  </script>
+</body>
+</html>
